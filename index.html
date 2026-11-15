@@ -12,7 +12,8 @@
 
 <body>
   <input type="file" id="fileInput" style="display: none;">
-  <video id="passthroughVideo" autoplay playsinline muted style="display: none;"></video>
+  <video id="passthroughVideo" autoplay playsinline muted
+    style="position: absolute; left: 0; top: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none;"></video>
 
   <a-scene background="color: grey">
 
@@ -51,7 +52,7 @@
     <a-entity id="cameraRig" adjust-camera position="0 0 0">
       <!-- camera-wrapper rotates around camera-rig for recenter -->
       <a-entity recenter clickable geometry="primitive: sphere; radius: 80; segmentsWidth: 8; segmentsHeight: 8"
-        material="opacity: 0; side: back">
+        material="opacity: 0; side: back; depthWrite: false">
         <a-entity id="cameraWrapper">
           <!-- camera rotation controlled by vrheadset/mousekeyboard -->
           <a-entity id="camera" camera look-controls stereocam="eye:left">
