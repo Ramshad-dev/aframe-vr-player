@@ -14,6 +14,7 @@ export const ST = {
     VIEW_ANG: 'viewAngle',
     UI_ANG: 'uiAngle',
     CUR_TYPE: 'cursorType',
+    VIDEO_ZOOM: 'videoZoom',
 
     FLAT_ENV_POI: 'flatEnv_poi',
     FLAT_ENV_BG: 'flatEnv_bg',
@@ -67,6 +68,7 @@ AFRAME.registerComponent(SETTINGS, {
         [ST.VIEW_ANG]: { type: 'number', default: 0 },
         [ST.UI_ANG]: { type: 'number', default: 0 },
         [ST.CUR_TYPE]: { type: 'string', default: CUR_TYPE.TAP },
+        [ST.VIDEO_ZOOM]: { type: 'number', default: 1 },
 
         [ST.FLAT_ENV_BG]: { type: 'number', default: 0 },
         [ST.FLAT_ENV_POI]: { type: 'number', default: 0 },

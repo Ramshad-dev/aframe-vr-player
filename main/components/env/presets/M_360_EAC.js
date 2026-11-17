@@ -34,6 +34,7 @@ AFRAME.registerShader('youtube-eac', {
         faceWH: { type: 'vec2', default: { x: 1 / 3, y: 1 / 2 }, is: 'uniform' },
         vidWH: { type: 'vec2', default: { x: 1, y: 1 }, is: 'uniform' },
         crop: { type: 'number', default: EDGE_CROP, is: 'uniform' },
+        zoom: { type: 'number', default: 1, is: 'uniform' },
         keyColor: { type: 'color', default: '#00FF00', is: 'uniform' },
         similarity: { type: 'number', default: 0.35, is: 'uniform' },
         smoothness: { type: 'number', default: 0.12, is: 'uniform' },
@@ -56,6 +57,7 @@ AFRAME.registerShader('youtube-eac', {
         uniform vec2 faceWH;
         uniform vec2 vidWH;
         uniform float crop;
+        uniform float zoom;
         uniform vec3 keyColor;
         uniform float similarity;
         uniform float smoothness;
@@ -71,6 +73,7 @@ AFRAME.registerShader('youtube-eac', {
 
             vec2 p = (vUv - vTile) / faceWH - 0.5;
             vec2 q = (2.0 / PI) * atan(2.0 * p) + 0.5;
+            q = clamp((q - 0.5) / zoom + 0.5, vec2(0.0), vec2(1.0));
 
             // q = 0 / 1 lands on the first / last texel centre of the tile,
             // so filtering never reaches across into the next face.

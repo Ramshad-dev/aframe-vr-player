@@ -198,7 +198,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
             })
             if (this.data.videoType === '2D') {
                 this.view = createEl('a-entity', this.viewAttr, [], this.el)
-                registerVideoView(this.view, { ...this.viewBase })
+                registerVideoView(this.view, { ...this.viewBase }, { zoomCenter: { x: 0.5, y: 0.5 } })
             } else if (this.data.videoType === '3D') {
                 this.left = createEl('a-entity', {
                     ...this.viewAttr,
@@ -209,7 +209,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
                     ...this.viewBase,
                     offset: { x: 0, y: 0 },
                     repeat: { x: 0.5, y: 1 },
-                })
+                }, { zoomCenter: { x: 0.25, y: 0.5 } })
 
                 this.right = createEl('a-entity', {
                     ...this.viewAttr,
@@ -220,7 +220,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
                     ...this.viewBase,
                     offset: { x: 0.5, y: 0 },
                     repeat: { x: 0.5, y: 1 },
-                })
+                }, { zoomCenter: { x: 0.75, y: 0.5 } })
             }
         }
 

@@ -79,8 +79,8 @@ AFRAME.registerComponent(PRESET.TB_360_EQR, {
             rotation: "0 -90 0"
         })
 
-        registerVideoView(this.leftEye, { src: '#video', side: 'back' })
-        registerVideoView(this.rightEye, { src: '#video', side: 'back' })
+        registerVideoView(this.leftEye, { src: '#video', side: 'back' }, { zoomCenter: { x: 0.5, y: 0.75 } })
+        registerVideoView(this.rightEye, { src: '#video', side: 'back' }, { zoomCenter: { x: 0.5, y: 0.25 } })
 
         this.el.append(this.leftEye, this.rightEye)
     },

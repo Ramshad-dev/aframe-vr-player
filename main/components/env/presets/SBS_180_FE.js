@@ -94,8 +94,8 @@ AFRAME.registerComponent(PRESET.SBS_180_FE, {
 
             })
 
-        registerVideoView(this.leftEye, { src: '#video', side: 'back' })
-        registerVideoView(this.rightEye, { src: '#video', side: 'back' })
+        registerVideoView(this.leftEye, { src: '#video', side: 'back' }, { zoomCenter: { x: 0.25, y: 0.5 } })
+        registerVideoView(this.rightEye, { src: '#video', side: 'back' }, { zoomCenter: { x: 0.75, y: 0.5 } })
 
         this.el.append(this.leftEye, this.rightEye, this.hideA)
 

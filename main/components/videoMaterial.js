@@ -5,6 +5,7 @@ import { CHROMA_SHADER } from "./chroma.js"
 
 const views = new Set()
 const hiders = new Set()
+const DEFAULT_ZOOM_CENTER = { x: 0.5, y: 0.5 }
 let lastState = null
 
 const state = () => [
@@ -12,11 +13,29 @@ const state = () => [
     getSettings(ST.KEY_COLOR),
     getSettings(ST.KEY_SIMILARITY),
     getSettings(ST.KEY_SMOOTHNESS),
+    getSettings(ST.VIDEO_ZOOM),
 ]
+
+const zoomedUv = (base, center, zoom) => {
+    const repeat = base.repeat || { x: 1, y: 1 }
+    const offset = base.offset || { x: 0, y: 0 }
+    return {
+        repeat: {
+            x: repeat.x / zoom,
+            y: repeat.y / zoom,
+        },
+        offset: {
+            x: center.x + (offset.x - center.x) / zoom,
+            y: center.y + (offset.y - center.y) / zoom,
+        },
+    }
+}
 
 const applyVideoMaterial = (el) => {
     const base = el._videoBase || {}
     const passthrough = !!getSettings(ST.PASSTHROUGH)
+    const zoom = getSettings(ST.VIDEO_ZOOM) || 1
+    const center = el._videoZoomCenter || DEFAULT_ZOOM_CENTER
     const props = { ...base }
     const shader = props.shader
     delete props.shader
@@ -24,6 +43,7 @@ const applyVideoMaterial = (el) => {
     if (shader === 'youtube-eac') {
         el.setAttribute('material', {
             ...props,
+            zoom,
             transparent: passthrough,
             depthWrite: !passthrough,
             enabled: passthrough ? 1 : 0,
@@ -34,10 +54,13 @@ const applyVideoMaterial = (el) => {
         return
     }
 
+    const uv = zoomedUv(base, center, zoom)
+
     if (passthrough) {
         el.setAttribute('material', {
             shader: CHROMA_SHADER,
             ...props,
+            ...uv,
             transparent: true,
             depthWrite: false,
             enabled: 1,
@@ -49,6 +72,7 @@ const applyVideoMaterial = (el) => {
         el.setAttribute('material', {
             shader: 'flat',
             ...props,
+            ...uv,
             transparent: false,
             depthWrite: true,
         })
@@ -94,8 +118,9 @@ export const unregisterPassthroughHider = (el) => {
 
 // `base` holds the material properties that belong to the preset, e.g.
 // { src: '#video', side: 'back', offset: {x: 0.5, y: 0} }.
-export const registerVideoView = (el, base = {}) => {
+export const registerVideoView = (el, base = {}, options = {}) => {
     el._videoBase = base
+    el._videoZoomCenter = options.zoomCenter || DEFAULT_ZOOM_CENTER
     views.add(el)
     applyVideoMaterial(el)
     return el
