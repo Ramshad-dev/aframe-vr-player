@@ -55,4 +55,5 @@ import './components/buttons/btnHideControls.js'
 import './components/buttons/btnSettings.js'
 import './components/buttons/btnStreamLink.js'
 import './components/buttons/btnVideoZoom.js'
+import './components/buttons/btnChromaKey.js'
 

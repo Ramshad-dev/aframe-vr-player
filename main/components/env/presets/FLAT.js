@@ -65,6 +65,19 @@ const bgs = [
             },
         ]
     },
+    {
+        name: 'void',
+        src: null,
+        poi: [
+            {
+                tv: {
+                    geometry: { height: 60 },
+                    position: '0 0 -65'
+                },
+                bg: {}
+            }
+        ]
+    },
 
 ]
 
@@ -79,6 +92,16 @@ AFRAME.registerComponent(PRESET.FLAT, {
         videoType: { type: 'string', default: '2D' },
         lights: { type: 'boolean', default: true },
         passthrough: { type: 'boolean', default: false },
+    },
+    createBg: function () {
+        const bg = bgs[this.data.bgIdx]
+        if (bg.src) {
+            return createEl('a-gltf-model', {
+                ...bg.poi[this.data.poiIdx].bg,
+                src: bg.src
+            }, [], this.el)
+        }
+        return createEl('a-entity', bg.poi[this.data.poiIdx].bg, [], this.el)
     },
     init: function () {
         this.onVideoChange = AFRAME.utils.bind(this.onVideoChange, this)
@@ -104,10 +127,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
 
 
         // bg toggle >>>
-        this.bg = createEl('a-gltf-model', {
-            ...bgs[this.data.bgIdx].poi[this.data.poiIdx].bg,
-            src: bgs[this.data.bgIdx].src
-        }, [], this.el)
+        this.bg = this.createBg()
 
         this.bgToggle = createEl('a-entity', {
             position: '0 -16 -60',
@@ -238,6 +258,16 @@ AFRAME.registerComponent(PRESET.FLAT, {
             this.lightsToggle.object3D.visible = false
         }
 
+        const bg = bgs[this.data.bgIdx]
+        const expectedTag = bg.src ? 'a-gltf-model' : 'a-entity'
+        if (this.bg.tagName.toLowerCase() !== expectedTag ||
+            (bg.src && this.bg.getAttribute('src') !== bg.src)) {
+            this.el.removeChild(this.bg)
+            this.bg = this.createBg()
+        }
+        setAttr(this.bg, bg.poi[this.data.poiIdx].bg)
+        this.el.sceneEl.setAttribute('background', 'color', bg.src ? 'grey' : '#000000')
+
         const showEnv = !this.data.passthrough
         this.bg.object3D.visible = showEnv
         this.bgToggle.object3D.visible = showEnv
@@ -251,13 +281,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
             setAttr(this.lightsToggle, { text: `value: Lights - OFF` })
         }
 
-        if (this.bg.getAttribute('src') !== bgs[this.data.bgIdx].src) {
-            setAttr(this.bg, {
-                src: bgs[this.data.bgIdx].src
-            })
-        }
-        setAttr(this.bg, bgs[this.data.bgIdx].poi[this.data.poiIdx].bg)
-        setAttr(viewEls(this.el), bgs[this.data.bgIdx].poi[this.data.poiIdx].tv)
+        setAttr(viewEls(this.el), bg.poi[this.data.poiIdx].tv)
         this.applyAspect()
 
     },
@@ -292,6 +316,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
 
     remove: function () {
         this.el.sceneEl.systems['light-controls'].on()
+        this.el.sceneEl.setAttribute('background', 'color', 'grey')
         this.el.removeChild(this.bg)
         this.el.removeChild(this.bgToggle)
         this.el.removeChild(this.poiToggle)
