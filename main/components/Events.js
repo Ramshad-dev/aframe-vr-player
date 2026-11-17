@@ -4,6 +4,8 @@ export const EV = {
     VIDSTATE: 'VideoState',
     CONTROLS: 'Controls',
     ENVIRONMENT: 'Environment',
+    INPUT: 'Input',
+    INPUT_BINDINGS: 'InputBindings',
 }
 
 AFRAME.registerComponent('events', {

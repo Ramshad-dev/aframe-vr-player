@@ -18,6 +18,7 @@
   <a-scene background="color: grey">
 
     <a-entity id="events" events></a-entity>
+    <a-entity id="input" control-mapper></a-entity>
     <a-entity id="settings" settings></a-entity>
     <a-entity id="video-state" video-state></a-entity>
 
@@ -43,6 +44,7 @@
       <img id="asset-link" src="assets/link.svg">
       <img id="asset-chroma-off" src="assets/chroma-off.svg">
       <img id="asset-chroma-on" src="assets/chroma-on.svg">
+      <img id="asset-gamepad" src="assets/gamepad.svg">
       <img id="asset-check" src="assets/check.png">
       <img id="asset-uncheck" src="assets/uncheck.png">
       <img id="asset-arrow" src="assets/arrow.png">
@@ -110,6 +112,8 @@
       <a-image btn-stream-link clickable button-highlight controls src="#asset-link" position="28 -5 -60"
         scale="5 5 1"></a-image>
       <a-image btn-chroma-key clickable button-highlight controls src="#asset-chroma-off" position="35 -5 -60"
+        scale="5 5 1"></a-image>
+      <a-image btn-input-bindings clickable button-highlight controls src="#asset-gamepad" position="42 -5 -60"
         scale="5 5 1"></a-image>
 
       <a-entity id="toggleAdjustUi" toggle-adjust-ui controls>

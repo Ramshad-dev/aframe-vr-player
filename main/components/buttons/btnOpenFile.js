@@ -1,5 +1,12 @@
 import { El } from "../../elems.js";
 import { C_FILES } from "../dialog/Files.js";
+import { DIALOG_SETTINGS } from "../dialog/Settings.js";
+import { DIALOG_INPUT_BINDINGS } from "../dialog/InputBindings.js";
+
+const closeOtherDialogs = (dialog) => {
+    if (dialog.hasAttribute(DIALOG_SETTINGS)) dialog.removeAttribute(DIALOG_SETTINGS);
+    if (dialog.hasAttribute(DIALOG_INPUT_BINDINGS)) dialog.removeAttribute(DIALOG_INPUT_BINDINGS);
+};
 
 AFRAME.registerComponent('btn-open-file', {
     schema: {
@@ -25,12 +32,14 @@ AFRAME.registerComponent('btn-open-file', {
                         d.replaceChildren()
                         d.object3D.visible = false
                     } else {
+                        closeOtherDialogs(d)
                         d.setAttribute(C_FILES, { reRender: 'rerender' })
                     }
                 } else {
                     d.setAttribute(C_FILES, { reRender: 'rerender' })
                 }
             } else {
+                closeOtherDialogs(d)
                 d.setAttribute(C_FILES, '')
                 d.object3D.visible = true
             }

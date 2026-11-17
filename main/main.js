@@ -20,6 +20,7 @@ import './components/Subtitles.js'
 import './components/chroma.js'
 import './components/videoMaterial.js'
 import './components/Passthrough.js'
+import './components/ControlMapper.js'
 
 
 
@@ -29,6 +30,7 @@ import './components/dialog/Files.js'
 import './components/dialog/Settings.js'
 import './components/dialog/Loading.js'
 import './components/dialog/Utils.js'
+import './components/dialog/InputBindings.js'
 
 // components:settings
 import './components/settings/Settings.js'
@@ -56,4 +58,5 @@ import './components/buttons/btnSettings.js'
 import './components/buttons/btnStreamLink.js'
 import './components/buttons/btnVideoZoom.js'
 import './components/buttons/btnChromaKey.js'
+import './components/buttons/btnInputBindings.js'
 

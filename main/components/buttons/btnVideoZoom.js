@@ -1,13 +1,16 @@
 import { El } from "../../elems.js";
 import { createEl, setAttr } from "../../utils.js";
 import { getSettings, setSettings, ST } from "../settings/Settings.js";
+import { EV } from "../Events.js";
 
-const ZOOM_LEVELS = [1, 1.25, 1.5, 2, 3, 4, 6]
+export const ZOOM_LEVELS = [1, 1.25, 1.5, 2, 3, 4, 6]
 
 AFRAME.registerComponent('btn-video-zoom', {
     init: function () {
         let el = this.el
         this.setZoom = AFRAME.utils.bind(this.setZoom, this)
+        this.onSettingsChange = AFRAME.utils.bind(this.onSettingsChange, this)
+        El.events.addEventListener(EV.SETTINGS, this.onSettingsChange)
 
         let width = this.width = 10
         let height = this.height = 4
@@ -34,7 +37,7 @@ AFRAME.registerComponent('btn-video-zoom', {
 
         this.setZoom(getSettings(ST.VIDEO_ZOOM) ?? 1)
     },
-    setZoom: function (value) {
+    setZoom: function (value, emit = true) {
         let index
         if (ZOOM_LEVELS.includes(value)) {
             index = ZOOM_LEVELS.indexOf(value)
@@ -48,7 +51,7 @@ AFRAME.registerComponent('btn-video-zoom', {
         const q = Math.max(0.5, this.width * fraction)
         const p = q / 2
 
-        setSettings(ST.VIDEO_ZOOM, zoom)
+        if (emit) setSettings(ST.VIDEO_ZOOM, zoom)
         setAttr(this.el, {
             text: `value: ${zoom}x`
         })
@@ -56,5 +59,13 @@ AFRAME.registerComponent('btn-video-zoom', {
             position: `${p - this.width / 2} 0 0.2`,
             geometry: { width: q }
         })
+    },
+    onSettingsChange: function (event) {
+        const zoom = event.detail[ST.VIDEO_ZOOM]
+        if (zoom === undefined) return
+        this.setZoom(zoom, false)
+    },
+    remove: function () {
+        El.events.removeEventListener(EV.SETTINGS, this.onSettingsChange)
     }
 });

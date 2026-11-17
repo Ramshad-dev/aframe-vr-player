@@ -3,6 +3,8 @@ import { createEl, getAttr } from "../../utils.js"
 import { CUR_TYPE } from "../CursorUtil.js"
 import { openKeyColorPicker } from "../KeyColorPicker.js"
 import { getSettings, setSettings, SETTINGS, ST } from "../settings/Settings.js"
+import { C_FILES } from "./Files.js"
+import { DIALOG_INPUT_BINDINGS } from "./InputBindings.js"
 
 import { DHeight, DWidth } from "./Utils.js"
 
@@ -461,9 +463,28 @@ function seekTimeTgl(el, y) {
     el.appendChild(tile)
 }
 
+function gamepadBindingsTgl(el, y) {
+    const tile = createEl("a-plane", {
+        "geometry": `width: ${DWidth * 0.40}; height: ${DHeight * 0.1}`,
+        "material": "color: #A15807;",
+        "position": `${DWidth * 0.25} ${y} 0.2`,
+        "clickable": "",
+        "button-highlight": "",
+        "text": "value: OPEN; align: center; width: 35; zOffset: 0.2;",
+    }, [], el)
+
+    tile.addEventListener('click', () => {
+        if (El.dialog.hasAttribute(DIALOG_SETTINGS)) El.dialog.removeAttribute(DIALOG_SETTINGS)
+        if (El.dialog.hasAttribute(C_FILES)) El.dialog.removeAttribute(C_FILES)
+        El.dialog.setAttribute(DIALOG_INPUT_BINDINGS, '')
+        El.dialog.object3D.visible = true
+    })
+}
+
 const settings = [
     { name: "save preset per video", render: savePresetChk, storeKey: ST.SAVE_PRESET },
     { name: "resume video", render: resumeVideoChk, storeKey: ST.RESUME_VIDEO },
+    { name: "gamepad bindings", render: gamepadBindingsTgl, storeKey: '' },
     { name: "default eye", render: defaultEyeTgl, storeKey: ST.DEF_EYE },
     { name: "toggle cursor type", render: toggleCursorType, storeKey: ST.CUR_TYPE },
     { name: "camera passthrough", render: passthroughChk, storeKey: ST.PASSTHROUGH },
