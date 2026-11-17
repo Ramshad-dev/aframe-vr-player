@@ -184,7 +184,13 @@ AFRAME.registerComponent(PRESET.FLAT, {
 
     applyAspect: function () {
         const height = bgs[this.data.bgIdx].poi[this.data.poiIdx].tv.geometry.height
-        setAttr(viewEls(this.el), { geometry: { width: this.viewWidth(height) } })
+        const zoom = getSettings(ST.VIDEO_ZOOM) || 1
+        setAttr(viewEls(this.el), {
+            geometry: {
+                width: this.viewWidth(height) * zoom,
+                height: height * zoom,
+            }
+        })
     },
 
     update: function (od) {
@@ -198,7 +204,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
             })
             if (this.data.videoType === '2D') {
                 this.view = createEl('a-entity', this.viewAttr, [], this.el)
-                registerVideoView(this.view, { ...this.viewBase }, { zoomCenter: { x: 0.5, y: 0.5 } })
+                registerVideoView(this.view, { ...this.viewBase }, { zoomMode: 'scale' })
             } else if (this.data.videoType === '3D') {
                 this.left = createEl('a-entity', {
                     ...this.viewAttr,
@@ -209,7 +215,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
                     ...this.viewBase,
                     offset: { x: 0, y: 0 },
                     repeat: { x: 0.5, y: 1 },
-                }, { zoomCenter: { x: 0.25, y: 0.5 } })
+                }, { zoomMode: 'scale' })
 
                 this.right = createEl('a-entity', {
                     ...this.viewAttr,
@@ -220,7 +226,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
                     ...this.viewBase,
                     offset: { x: 0.5, y: 0 },
                     repeat: { x: 0.5, y: 1 },
-                }, { zoomCenter: { x: 0.75, y: 0.5 } })
+                }, { zoomMode: 'scale' })
             }
         }
 
@@ -280,6 +286,7 @@ AFRAME.registerComponent(PRESET.FLAT, {
                 passthrough: !!e.detail[ST.PASSTHROUGH],
             }
         })
+        this.applyAspect()
 
     },
 

@@ -16,9 +16,12 @@ const state = () => [
     getSettings(ST.VIDEO_ZOOM),
 ]
 
-const zoomedUv = (base, center, zoom) => {
+const uvProps = (base, center, zoom, mode) => {
     const repeat = base.repeat || { x: 1, y: 1 }
     const offset = base.offset || { x: 0, y: 0 }
+    if (mode === 'scale') {
+        return { repeat, offset }
+    }
     return {
         repeat: {
             x: repeat.x / zoom,
@@ -36,6 +39,7 @@ const applyVideoMaterial = (el) => {
     const passthrough = !!getSettings(ST.PASSTHROUGH)
     const zoom = getSettings(ST.VIDEO_ZOOM) || 1
     const center = el._videoZoomCenter || DEFAULT_ZOOM_CENTER
+    const mode = el._videoZoomMode || 'uv'
     const props = { ...base }
     const shader = props.shader
     delete props.shader
@@ -54,7 +58,7 @@ const applyVideoMaterial = (el) => {
         return
     }
 
-    const uv = zoomedUv(base, center, zoom)
+    const uv = uvProps(base, center, zoom, mode)
 
     if (passthrough) {
         el.setAttribute('material', {
@@ -121,6 +125,7 @@ export const unregisterPassthroughHider = (el) => {
 export const registerVideoView = (el, base = {}, options = {}) => {
     el._videoBase = base
     el._videoZoomCenter = options.zoomCenter || DEFAULT_ZOOM_CENTER
+    el._videoZoomMode = options.zoomMode || 'uv'
     views.add(el)
     applyVideoMaterial(el)
     return el
