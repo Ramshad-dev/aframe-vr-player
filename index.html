@@ -40,6 +40,7 @@
       <img id="asset-unknown" src="assets/unknown.png">
       <img id="asset-refresh" src="assets/refresh.png">
       <img id="asset-settings" src="assets/settings.png">
+      <img id="asset-link" src="assets/link.svg">
       <img id="asset-check" src="assets/check.png">
       <img id="asset-uncheck" src="assets/uncheck.png">
       <img id="asset-arrow" src="assets/arrow.png">
@@ -47,7 +48,7 @@
 
     <!-- <a-entity environment="preset: starry"></a-entity> -->
 
-    <video id="video" src="assets/sample.mp4"></video>
+    <video id="video" src="assets/sample.mp4" crossorigin="anonymous" playsinline></video>
     <!-- camera stuff -->
     <a-entity id="cameraRig" adjust-camera position="0 0 0">
       <!-- camera-wrapper rotates around camera-rig for recenter -->
@@ -101,6 +102,8 @@
       <a-image btn-hide-controls clickable button-highlight controls src="#asset-vp-hide-ui" position="14 -5 -60"
         scale="5 5 1"></a-image>
       <a-image btn-settings clickable button-highlight controls src="#asset-settings" position="21 -5 -60"
+        scale="5 5 1"></a-image>
+      <a-image btn-stream-link clickable button-highlight controls src="#asset-link" position="28 -5 -60"
         scale="5 5 1"></a-image>
 
       <a-entity id="toggleAdjustUi" toggle-adjust-ui controls>

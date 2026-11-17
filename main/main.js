@@ -53,4 +53,5 @@ import './components/buttons/btnSeekForw.js'
 import './components/buttons/btnVol.js'
 import './components/buttons/btnHideControls.js'
 import './components/buttons/btnSettings.js'
+import './components/buttons/btnStreamLink.js'
 
