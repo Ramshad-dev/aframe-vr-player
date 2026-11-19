@@ -6,6 +6,44 @@ import { ST, getSettings } from "./settings/Settings.js"
 
 export const C_VID_STATE = 'video-state'
 
+let hls = null
+
+const isHlsSource = (src) => /\.m3u8(?:$|[?#])/i.test(src || '')
+
+const detachHls = () => {
+    if (!hls) return
+    hls.destroy()
+    hls = null
+}
+
+const attachHls = (video, src) => {
+    detachHls()
+    video.pause()
+    video.removeAttribute('src')
+    video.load()
+
+    if (window.Hls && window.Hls.isSupported()) {
+        hls = new window.Hls({ lowLatencyMode: true, backBufferLength: 30 })
+        hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
+            video.play().catch(() => {})
+        })
+        hls.on(window.Hls.Events.ERROR, (_, data) => {
+            if (data && data.fatal) console.error('hls.js fatal error', data)
+        })
+        hls.attachMedia(video)
+        hls.loadSource(src)
+        return
+    }
+
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src
+        video.play().catch(() => {})
+        return
+    }
+
+    console.error('HLS playback is not supported by this browser')
+}
+
 AFRAME.registerComponent(C_VID_STATE, {
     schema: {
         presetId: { type: 'number', default: 0 },
@@ -89,13 +127,18 @@ AFRAME.registerComponent(C_VID_STATE, {
             // new video selected
             if (od.src !== d.src) {
                 this.setupKeys(d.src)
-                this.video.src = d.src
-                this.video.play()
+                if (isHlsSource(d.src)) {
+                    attachHls(this.video, d.src)
+                } else {
+                    detachHls()
+                    this.video.src = d.src
+                    this.video.play()
+                }
             }
 
         }
 
-        if (getSettings(ST.RESUME_VIDEO)) {
+        if (getSettings(ST.RESUME_VIDEO) && !isHlsSource(d.src)) {
             this.video.addEventListener('timeupdate', this.saveVidTime)
         } else {
             this.video.removeEventListener('timeupdate', this.saveVidTime)
@@ -109,7 +152,7 @@ AFRAME.registerComponent(C_VID_STATE, {
     onVideoLoad: function () {
         this.lastUpdate = Date.now()
 
-        if (getSettings(ST.RESUME_VIDEO)) {
+        if (getSettings(ST.RESUME_VIDEO) && !isHlsSource(this.data.src)) {
             let t = Store.get(this.timeKey)
             if (t) {
                 this.video.currentTime = t
@@ -140,6 +183,7 @@ AFRAME.registerComponent(C_VID_STATE, {
     },
 
     remove: function () {
+        detachHls()
         El.controls.removeChild(this.toggleModeBtn)
         this.video.removeEventListener('timeupdate', this.saveVidTime)
         this.video.removeEventListener('loadedmetadata', this.onVideoLoad)

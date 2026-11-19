@@ -9,6 +9,7 @@ export function adjustColor(color, amount) {
 
 export function toTime(seconds) {
     if (isNaN(seconds)) seconds = 0
+    if (!Number.isFinite(seconds)) return 'LIVE'
     var date = new Date(null);
     date.setSeconds(seconds);
     return date.toISOString().substr(11, 8);

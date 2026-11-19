@@ -35,6 +35,14 @@ AFRAME.registerSystem(THUMBNAILS, {
 
     processSrc: function () {
         this.src = this.video.src
+        if (!Number.isFinite(this.video.duration) || this.video.duration <= 0) {
+            this.current = ''
+            this.disposeThumbs(this.thumbs, 'Live stream has no thumbnails')
+            this.thumbs = []
+            this.error = ''
+            this.loading = false
+            return
+        }
         this.current = trimJoin(THUMB_URL, this.src.replace(new RegExp(`^.*${FILE_GET_URL}`), ""))
         console.log(this.current)
         let len = Math.floor(this.video.duration / 60)

@@ -1,6 +1,7 @@
 import { THUMBNAILS } from "../systems/Thumbnails.js";
 import { createEl, toTime } from "../utils.js";
 
+const isLive = (video) => !Number.isFinite(video.duration) || video.duration <= 0;
 
 AFRAME.registerComponent('timeline', {
     schema: {
@@ -53,20 +54,24 @@ AFRAME.registerComponent('timeline', {
         }, [], el)
 
         this.updateElems = () => {
-            var newPosition = (this.video.currentTime / this.video.duration) * width - width / 2;
+            var live = isLive(this.video)
+            var newPosition = live ? -width / 2 : (this.video.currentTime / this.video.duration) * width - width / 2;
             this.seek.setAttribute("position", { x: newPosition });
-            this.videoText.setAttribute("text", { value: `${toTime(this.video.currentTime)} /${toTime(this.video.duration)}` })
+            var value = live ? 'LIVE' : `${toTime(this.video.currentTime)} / ${toTime(this.video.duration)}`
+            this.videoText.setAttribute("text", { value: value })
         }
 
         this.video.addEventListener("loadedmetadata", () => {
+            var live = isLive(this.video)
             this.seek.setAttribute("position", { x: -width / 2 })
-            this.videoText.setAttribute("text", { value: `${toTime(this.video.currentTime)}/${toTime(this.video.duration)}` })
+            this.videoText.setAttribute("text", { value: live ? 'LIVE' : `${toTime(this.video.currentTime)}/${toTime(this.video.duration)}` })
         })
 
         this.video.addEventListener('timeupdate', this.updateElems)
 
         el.addEventListener("click", (e) => {
             let v = this.video
+            if (isLive(v)) return
             if (v.readyState === 0) {
                 console.log('no info available for video')
                 return
@@ -99,6 +104,16 @@ AFRAME.registerComponent('timeline', {
         let percentGazed = intersection.uv.x;
         let timelineWidth = timeline.getAttribute("geometry").width;
         let possibleNew = percentGazed * timelineWidth - timelineWidth / 2;
+
+        if (isLive(this.video)) {
+            let { y, z } = this.hoverEl.getAttribute("position");
+            this.hoverThumb.getObject3D('mesh').material.map = this.el.sceneEl.systems[THUMBNAILS].thumbError
+            this.hoverEl.setAttribute("position", `${possibleNew} ${y} ${z}`);
+            this.hoverTextEl.setAttribute("value", "LIVE");
+            this.previousIntersection = intersection.point;
+            return;
+        }
+
         let possibleTime = Math.floor(percentGazed * this.video.duration);
         let { y, z } = this.hoverEl.getAttribute("position");
         
